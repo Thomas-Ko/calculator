@@ -4,57 +4,70 @@
 
 
 model = {
-	"0" : {
-		value: 0,
-	},
-	"1" : {
-		value: 1,
-	},
-	"2" : {
-		value: 2,
-	},
-	"3" : {
-		value: 3,
-	},
-	"4" : {
-		value: 4,
-	},
-	"5" : {
-		value: 5,
-	},
-	"6" : {
-		value: 6,
-	},
-	"7" : {
-		value: 7,
-	},
-	"8" : {
-		value: 8,
-	},
-	"9" : {
-		value: 9,
+	display : null,
+
+	toEval: "",
+
+};
+
+// controller
+
+controller = {
+	takeAndSendToEval : function(value){
+		model.toEval = model.toEval.concat(value);
+		view.display="";
 	},
 };
 
-var onScreen ="";
-var onScreenVal;
 
-$(".button").on("click", ".number", function(){
-	console.log($(this).val());
 
-	var val = $(this).val();
-	console.log(model[""+val]);
-	var modelValue = model[""+val].value;
-	// onScreen = onScreen.concat(modelValue);
-	renderNumberInput(modelValue);
-});
-
-function renderNumberInput(value){
-	if (onScreen.length>9){
+view = {
+	display : "",
+	renderNumberInput: function(value){
+		if (isNaN(value)){
+			console.log("not a number");
+			this.display=""+value;
+			$("#display").text(this.display);
 		
-	} else {
-		onScreen = onScreen.concat(value);
+			// (this.display.length>9){
+			// controller.takeAndSendtoEval(this.display);
+		} else if (this.display.length === 1 && isNaN(this.display)){
+			// this.display = this.display.concat(value);
+			controller.takeAndSendToEval(this.display);
+			this.display = this.display.concat(value);
+			$("#display").text(this.display);
+
+		} else{
+		$("#display").text(this.display);
+			this.display = this.display.concat(value);
+			$("#display").text(this.display);
+		}
 	}
-	$("#display").text(onScreen);
-	onScreenVal = Number(onScreen);
-}
+};
+
+buttons = {
+	numberClick : function(){
+		$(".button").on("click", ".number", function(){
+			// console.log("value:");
+			// console.log($(this).val());
+			var val = $(this).val();
+			view.renderNumberInput(val);
+		});
+	},
+	operatorClick: function(){
+		$(".button").on("click", ".operator", function(){
+			console.log($(this).val());
+			var val = $(this).val();
+			if (view.display.length>0){
+				controller.takeAndSendToEval(view.display);
+				view.renderNumberInput(val);
+			}
+		});
+	}
+};
+
+
+
+
+buttons.numberClick();
+buttons.operatorClick();
