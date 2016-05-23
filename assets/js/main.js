@@ -13,10 +13,16 @@ model = {
 // controller
 
 controller = {
-	takeAndSendToEval : function(value){
+	sendToEval : function(value){
 		model.toEval = model.toEval.concat(value);
 		view.display="";
 	},
+	getToEval : function(value){
+		return model.toEval;
+	},
+	clearEval : function(){
+		model.toEval="";
+	}
 };
 
 
@@ -33,7 +39,7 @@ view = {
 			// controller.takeAndSendtoEval(this.display);
 		} else if (this.display.length === 1 && isNaN(this.display)){
 			// this.display = this.display.concat(value);
-			controller.takeAndSendToEval(this.display);
+			controller.sendToEval(this.display);
 			this.display = this.display.concat(value);
 			$("#display").text(this.display);
 
@@ -58,10 +64,23 @@ buttons = {
 		$(".button").on("click", ".operator", function(){
 			console.log($(this).val());
 			var val = $(this).val();
-			if (view.display.length>0){
-				controller.takeAndSendToEval(view.display);
+			if ($("#display").text().length>0){
+				controller.sendToEval(view.display);
 				view.renderNumberInput(val);
 			}
+		});
+	},
+
+	equalClick:function(){
+		$("#equal").on("click", function(){
+			controller.sendToEval(view.display);
+			view.display="";
+			$("#display").text("");
+			var val = eval(controller.getToEval());
+			console.log(val);
+			$("#display").text(""+val);
+			controller.clearEval();
+			controller.sendToEval(val);
 		});
 	}
 };
@@ -71,3 +90,4 @@ buttons = {
 
 buttons.numberClick();
 buttons.operatorClick();
+buttons.equalClick();
