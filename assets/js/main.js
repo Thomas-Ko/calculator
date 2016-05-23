@@ -4,49 +4,56 @@
 
 
 model = {
-	display : null,
+	currentInput : null,
 
-	toEval: "",
+	// toEval: "",
+	toEval: [],
 
 };
 
 // controller
 
 controller = {
+	currentInput : "",
 	sendToEval : function(value){
-		model.toEval = model.toEval.concat(value);
-		view.display="";
+		model.toEval.push(value);
+		controller.currentInput="";
 	},
 	getToEval : function(value){
 		return model.toEval;
 	},
 	clearEval : function(){
-		model.toEval="";
+		model.toEval=[];
+	},
+	evaluate: function(){
+		var val = eval(controller.getToEval().join(""));
+		$("#display").text(""+val);
+		controller.clearEval();
+		controller.currentInput="";
 	}
 };
 
 
 
 view = {
-	display : "",
 	renderNumberInput: function(value){
 		if (isNaN(value)){
 			console.log("not a number");
-			this.display=""+value;
-			$("#display").text(this.display);
+			controller.currentInput=""+value;
+			$("#display").text(controller.currentInput);
 		
-			// (this.display.length>9){
-			// controller.takeAndSendtoEval(this.display);
-		} else if (this.display.length === 1 && isNaN(this.display)){
-			// this.display = this.display.concat(value);
-			controller.sendToEval(this.display);
-			this.display = this.display.concat(value);
-			$("#display").text(this.display);
+			// (controller.currentInput.length>9){
+			// controller.takeAndSendtoEval(controller.currentInput);
+		} else if (controller.currentInput.length === 1 && isNaN(controller.currentInput)){
+			// controller.currentInput = controller.currentInput.concat(value);
+			controller.sendToEval(controller.currentInput);
+			controller.currentInput = controller.currentInput.concat(value);
+			$("#display").text(controller.currentInput);
 
 		} else{
-		$("#display").text(this.display);
-			this.display = this.display.concat(value);
-			$("#display").text(this.display);
+		$("#display").text(controller.currentInput);
+			controller.currentInput = controller.currentInput.concat(value);
+			$("#display").text(controller.currentInput);
 		}
 	}
 };
@@ -62,25 +69,33 @@ buttons = {
 	},
 	operatorClick: function(){
 		$(".button").on("click", ".operator", function(){
-			console.log($(this).val());
+			// console.log($(this).val());
 			var val = $(this).val();
-			if ($("#display").text().length>0){
-				controller.sendToEval(view.display);
-				view.renderNumberInput(val);
+
+			if (controller.currentInput.length>0 && !isNaN(controller.currentInput)){
+				controller.sendToEval(controller.currentInput);
+				controller.currentInput = val;
+			} else {
+				controller.currentInput = val;
 			}
 		});
 	},
 
 	equalClick:function(){
 		$("#equal").on("click", function(){
-			controller.sendToEval(view.display);
-			view.display="";
-			$("#display").text("");
-			var val = eval(controller.getToEval());
-			console.log(val);
-			$("#display").text(""+val);
-			controller.clearEval();
-			controller.sendToEval(val);
+			controller.sendToEval(controller.currentInput);
+			// controller.currentInput="";
+			// $("#display").text("");
+
+			// console.log (controller.getToEval().join(""));
+			
+			// var val = eval(controller.getToEval().join(""));
+			// $("#display").text(""+val);
+			// controller.clearEval();
+			// controller.currentInput=""+val;
+
+			controller.evaluate();
+			
 		});
 	}
 };
