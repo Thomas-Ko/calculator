@@ -30,6 +30,7 @@ controller = {
 		$("#display").text(""+val);
 		controller.clearEval();
 		controller.currentInput="";
+		this.sendToEval(val);
 	}
 };
 
@@ -42,16 +43,22 @@ view = {
 			controller.currentInput=""+value;
 			$("#display").text(controller.currentInput);
 		
-			// (controller.currentInput.length>9){
-			// controller.takeAndSendtoEval(controller.currentInput);
 		} else if (controller.currentInput.length === 1 && isNaN(controller.currentInput)){
-			// controller.currentInput = controller.currentInput.concat(value);
+			
 			controller.sendToEval(controller.currentInput);
 			controller.currentInput = controller.currentInput.concat(value);
 			$("#display").text(controller.currentInput);
 
-		} else{
+		//this is used to see if you just evaluated something
+		} else if (!isNaN(controller.getToEval()[0]) && controller.getToEval.length===1){
+			controller.clearEval();
+
 		$("#display").text(controller.currentInput);
+			controller.currentInput = controller.currentInput.concat(value);
+			$("#display").text(controller.currentInput);
+		} else {
+
+			$("#display").text(controller.currentInput);
 			controller.currentInput = controller.currentInput.concat(value);
 			$("#display").text(controller.currentInput);
 		}
@@ -74,6 +81,7 @@ buttons = {
 
 			if (controller.currentInput.length>0 && !isNaN(controller.currentInput)){
 				controller.sendToEval(controller.currentInput);
+				controller.evaluate();
 				controller.currentInput = val;
 			} else {
 				controller.currentInput = val;
