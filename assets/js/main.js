@@ -25,6 +25,10 @@ controller = {
 	clearEval : function(){
 		model.toEval=[];
 	},
+	clearCurrentInput : function(){
+		currentInput="";
+	},
+
 	evaluate: function(){
 		var val = eval(controller.getToEval().join(""));
 		$("#display").text(""+val);
@@ -66,6 +70,14 @@ view = {
 };
 
 buttons = {
+
+	init: function(){
+		this.numberClick();
+		this.operatorClick();
+		this.equalClick();
+		this.allClearClick();
+	},
+
 	numberClick : function(){
 		$(".button").on("click", ".number", function(){
 			// console.log("value:");
@@ -105,12 +117,18 @@ buttons = {
 			controller.evaluate();
 			
 		});
+	},
+
+	allClearClick: function(){
+		$("#allClear").on("click", function(){
+			controller.clearEval();
+			controller.clearCurrentInput();
+			$("#display").text("");
+		});
 	}
 };
 
 
 
 
-buttons.numberClick();
-buttons.operatorClick();
-buttons.equalClick();
+buttons.init();
