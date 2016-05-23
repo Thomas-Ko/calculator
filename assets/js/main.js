@@ -4,10 +4,9 @@
 
 
 model = {
-	currentInput : null,
-
 	// toEval: "",
 	toEval: [],
+	justEvaluated: null,
 
 };
 
@@ -16,58 +15,51 @@ model = {
 controller = {
 	currentInput : "",
 	sendToEval : function(value){
+		console.log("start controller.sendtoEval");
+		
 		model.toEval.push(value);
-		controller.currentInput="";
+		controller.clearCurrentInput();
+
+		
 	},
 	getToEval : function(value){
+		console.log("start controller.getToEval");
 		return model.toEval;
 	},
 	clearEval : function(){
+		console.log("controller.clearEval();");
 		model.toEval=[];
 	},
 	clearCurrentInput : function(){
+		console.log("controller.clearCurrentInput();");
 		currentInput="";
 	},
 
 	evaluate: function(){
+		console.log("start controller.evaluate()");
+		console.log(model.toEval);
+		var lastArrayItem = model.toEval[model.toEval.length-1];
+		
+		//if the last button pressed was an operator, it will be removed from the model.toEval array so it won't be evaluated
+		if (["-","+","/","*"].indexOf(lastArrayItem)>-1){
+			model.toEval.pop();
+		}
+
+		console.log("last item is:" +lastArrayItem);
 		var val = eval(controller.getToEval().join(""));
 		$("#display").text(""+val);
 		controller.clearEval();
-		controller.currentInput="";
+
 		this.sendToEval(val);
+		controller.currentInput=val;
+
+		console.log("end controller.evaluate()");
+		console.log(model.toEval);
 	}
 };
 
 
 
-view = {
-	renderNumberInput: function(value){
-		if (isNaN(value)){
-			console.log("not a number");
-			controller.currentInput=""+value;
-			$("#display").text(controller.currentInput);
-		
-		} else if (controller.currentInput.length === 1 && isNaN(controller.currentInput)){
-			
-			controller.sendToEval(controller.currentInput);
-			controller.currentInput = controller.currentInput.concat(value);
-			$("#display").text(controller.currentInput);
-
-		//this is used to see if you just evaluated something
-		} else if (!isNaN(controller.getToEval()[0]) && controller.getToEval.length===1){
-			controller.clearEval();
-
-		$("#display").text(controller.currentInput);
-			controller.currentInput = controller.currentInput.concat(value);
-			$("#display").text(controller.currentInput);
-		} else {
-
-			$("#display").text(controller.currentInput);
-			controller.currentInput = controller.currentInput.concat(value);
-			$("#display").text(controller.currentInput);
-		}
-	}
-};
 
 buttons = {
 
@@ -75,7 +67,7 @@ buttons = {
 		this.numberClick();
 		this.operatorClick();
 		this.equalClick();
-		this.allClearClick();
+		// this.allClearClick();
 	},
 
 	numberClick : function(){
@@ -83,21 +75,34 @@ buttons = {
 			// console.log("value:");
 			// console.log($(this).val());
 			var val = $(this).val();
-			view.renderNumberInput(val);
+			console.log(val);
+
+			//checks if previous button pressed was an operator and if it was sends operator to model
+			if(["*","/","-","+"].indexOf(controller.currentInput)>-1){
+				console.log("operator found");
+				controller.sendToEval(controller.currentInput);
+				controller.currentInput="";
+			} 
+				controller.currentInput= controller.currentInput.concat(val);
+				$("#display").text(controller.currentInput);			
+
+			console.log("number click " + val);
+			console.log(model.toEval);
 		});
 	},
 	operatorClick: function(){
 		$(".button").on("click", ".operator", function(){
-			// console.log($(this).val());
 			var val = $(this).val();
+
+			console.log("operator click " + val);
 
 			if (controller.currentInput.length>0 && !isNaN(controller.currentInput)){
 				controller.sendToEval(controller.currentInput);
-				controller.evaluate();
-				controller.currentInput = val;
-			} else {
-				controller.currentInput = val;
-			}
+				// controller.evaluate();
+				
+			} 
+				controller.currentInput = ""+ val;
+			
 		});
 	},
 
