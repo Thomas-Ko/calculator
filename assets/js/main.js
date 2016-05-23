@@ -6,7 +6,6 @@
 model = {
 	// toEval: "",
 	toEval: [],
-	justEvaluated: null,
 
 };
 
@@ -44,7 +43,6 @@ controller = {
 		if (["-","+","/","*"].indexOf(lastArrayItem)>-1){
 			model.toEval.pop();
 		}
-
 		console.log("last item is:" +lastArrayItem);
 		var val = eval(controller.getToEval().join(""));
 		$("#display").text(""+val);
