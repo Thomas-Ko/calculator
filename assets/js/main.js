@@ -8,12 +8,14 @@ model = {
 	toEval: [],
 	decimalClicked: false,
 	// isPositive: true,
+	
 };
 
 // controller
 
 controller = {
 	currentInput : "0",
+	justEvaluated : false,
 	sendToEval : function(value){
 		console.log("start controller.sendtoEval");
 		
@@ -44,6 +46,15 @@ controller = {
 		}
 	},
 
+	// justEvaluated: {
+	// 	getStatus: function(){
+	// 		return model.justEvaluated;
+	// 	},
+	// 	setStatus: function(tOrF){
+	// 		model.justEvaluated=tOrF;
+	// 	}
+	// },
+
 	// posOrNeg : {
 	// 	getStatus: function(){
 	// 		return model.isPositive;
@@ -65,12 +76,18 @@ controller = {
 			model.toEval.pop();
 		}
 		console.log("last item is:" +lastArrayItem);
-		var val = eval(controller.getToEval().join(""));
+		var str = controller.getToEval().join("");
+
+		//subtracting a negative number doesn't get evaluated in the eval function, so this just replaces two negations in a row to a plus operator
+		str = str.replace("--","+");
+		
+		var val = eval(str);
 		$("#display").text(""+val);
 		controller.clearEval();
 
 		this.sendToEval(val);
 		controller.currentInput=""+val;
+
 
 		console.log("end controller.evaluate()");
 		console.log(model.toEval);
@@ -104,16 +121,24 @@ buttons = {
 				controller.currentInput="0";
 			}
 
+			//this resets everything to be evaluated; this is used when a user starts a new number after evaluating something.
+			if (controller.getToEval().length===1){
+				controller.clearEval();
+				controller.currentInput="";
+			}
+
 			/*if the first number of a new input is not zero, then put it on display; this is used so a user can't keep pressing zero to a get number like
 			00000023; instead it would display 23*/
 			if(val>0 && (controller.currentInput==="0")){
 				controller.currentInput="";
 				controller.currentInput= controller.currentInput.concat(val);
 				$("#display").text(controller.currentInput);
+				controller.justEvaluated = false;
 			//allows user to append any number to his input
 			} else if(controller.currentInput!=="0"){
 				controller.currentInput= controller.currentInput.concat(val);
 				$("#display").text(controller.currentInput);
+				controller.justEvaluated = false;
 			}
 							
 
@@ -128,7 +153,7 @@ buttons = {
 			console.log("operator click " + val);
 
 
-			if (controller.currentInput.length>0 && !isNaN(controller.currentInput)){
+			if (controller.currentInput.length>0 && !isNaN(controller.currentInput) && controller.justEvaluated === false){
 				controller.sendToEval(controller.currentInput);
 				// controller.evaluate();
 				
@@ -150,6 +175,7 @@ buttons = {
 			// $("#display").text(""+val);
 			// controller.clearEval();
 			// controller.currentInput=""+val;
+			controller.justEvaluated = true;
 
 			controller.evaluate();
 			
@@ -174,7 +200,7 @@ buttons = {
 	negateClick: function(){
 		$("#negate").on("click", function(){
 			//if current input is a number and not zero;
-			if(!isNaN(controller.currentInput) && controller.currentInput!=="0"){
+			if(!isNaN(controller.currentInput) && controller.currentInput!=="0" && controller.justEvaluated === false){
 				
 				//if the number is positive, change to negative
 				if(controller.currentInput[0]!=="-"){
