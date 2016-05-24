@@ -6,7 +6,7 @@
 model = {
 	// toEval: "",
 	toEval: [],
-	decimalClicked: false,
+	// decimalClicked: false,
 	// isPositive: true,
 	
 };
@@ -37,14 +37,14 @@ controller = {
 		currentInput="";
 	},
 
-	decimal : {
-		getStatus: function(){
-			return model.decimalClicked;
-		},
-		setStatus: function(tOrF){
-			model.decimalClicked = tOrF;
-		}
-	},
+	// decimal : {
+	// 	getStatus: function(){
+	// 		return model.decimalClicked;
+	// 	},
+	// 	setStatus: function(tOrF){
+	// 		model.decimalClicked = tOrF;
+	// 	}
+	// },
 
 	// justEvaluated: {
 	// 	getStatus: function(){
@@ -71,6 +71,7 @@ controller = {
 		console.log(model.toEval);
 		var lastArrayItem = model.toEval[model.toEval.length-1];
 		
+
 		//if the last button pressed was an operator, it will be removed from the model.toEval array so it won't be evaluated
 		if (["-","+","/","*"].indexOf(lastArrayItem)>-1){
 			model.toEval.pop();
@@ -81,13 +82,20 @@ controller = {
 		//subtracting a negative number doesn't get evaluated in the eval function, so this just replaces two negations in a row to a plus operator
 		str = str.replace("--","+");
 		
+
 		var val = eval(str);
-		$("#display").text(""+val);
-		controller.clearEval();
+		// if(controller.justEvaluated===false){
+			$("#display").text(""+val);
+			controller.clearEval();
+			console.log("cleared eval now it is");
+			console.log(model.toEval);
 
-		this.sendToEval(val);
-		controller.currentInput=""+val;
+			controller.sendToEval(val);
+			controller.currentInput=""+val;
+			
+		// }
 
+		controller.justEvaluated = true;
 
 		console.log("end controller.evaluate()");
 		console.log(model.toEval);
@@ -106,6 +114,7 @@ buttons = {
 		this.decimalClick();
 		this.negateClick();
 		this.allClearClick();
+		this.clearClick();
 	},
 
 	numberClick : function(){
@@ -155,17 +164,20 @@ buttons = {
 
 			if (controller.currentInput.length>0 && !isNaN(controller.currentInput) && controller.justEvaluated === false){
 				controller.sendToEval(controller.currentInput);
-				// controller.evaluate();
 				
 			} 
 				controller.currentInput = ""+ val;
-				controller.decimal.setStatus(false);
+				// controller.decimal.setStatus(false);
+				$("#display").text(controller.currentInput);
+				controller.justEvaluated = false;
 		});
 	},
 
 	equalClick:function(){
 		$("#equal").on("click", function(){
-			controller.sendToEval(controller.currentInput);
+			if(controller.justEvaluated===false){
+				controller.sendToEval(controller.currentInput);
+			}
 			// controller.currentInput="";
 			// $("#display").text("");
 
@@ -175,9 +187,9 @@ buttons = {
 			// $("#display").text(""+val);
 			// controller.clearEval();
 			// controller.currentInput=""+val;
-			controller.justEvaluated = true;
 
 			controller.evaluate();
+
 			
 		});
 	},
@@ -186,13 +198,15 @@ buttons = {
 		$("#decimal").on("click", function(){
 			if(["*","/","-","+"].indexOf(controller.currentInput)>-1){
 				controller.sendToEval(controller.currentInput);
+
 				controller.currentInput="0";
 			}
 			
-			if(!controller.decimal.getStatus() && controller.justEvaluated===false){
+			// if(!controller.decimal.getStatus() && controller.justEvaluated===false){
+			if(controller.currentInput.indexOf(".")===-1 && controller.justEvaluated===false){
 				controller.currentInput= controller.currentInput.concat(".");
 				$("#display").text(controller.currentInput);
-				controller.decimal.setStatus(true);
+				// controller.decimal.setStatus(true);
 			}
 		});
 	},
@@ -227,9 +241,18 @@ buttons = {
 			$("#display").text("0");
 			controller.justEvaluated = false;
 		});
-	}
-};
+	},
 
+	clearClick: function(){
+		$("#clear").on("click", function(){
+			if(!isNaN(controller.currentInput)){
+				controller.currentInput="0";
+				$("#display").text("0");
+			}
+		});
+	},
+
+};
 
 
 
