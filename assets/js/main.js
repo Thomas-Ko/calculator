@@ -82,9 +82,19 @@ controller = {
 		//subtracting a negative number doesn't get evaluated in the eval function, so this just replaces two negations in a row to a plus operator
 		str = str.replace("--","+");
 		
-
 		var val = eval(str);
 		// if(controller.justEvaluated===false){
+		if (val>999999999){
+			$("#display").text("E");
+			controller.clearEval();
+			controller.sendToEval("0");
+			controller.currentInput="0";
+		} else {
+
+			if(val.length>9){
+				val = val.splice(0,9);
+			}
+
 			$("#display").text(""+val);
 			controller.clearEval();
 			console.log("cleared eval now it is");
@@ -92,6 +102,9 @@ controller = {
 
 			controller.sendToEval(val);
 			controller.currentInput=""+val;
+		}
+
+			
 			
 		// }
 
@@ -145,9 +158,11 @@ buttons = {
 				controller.justEvaluated = false;
 			//allows user to append any number to his input
 			} else if(controller.currentInput!=="0"){
-				controller.currentInput= controller.currentInput.concat(val);
-				$("#display").text(controller.currentInput);
-				controller.justEvaluated = false;
+				if(controller.currentInput.length<9){
+					controller.currentInput= controller.currentInput.concat(val);
+					$("#display").text(controller.currentInput);
+					controller.justEvaluated = false;
+				}
 			}
 							
 
@@ -245,7 +260,7 @@ buttons = {
 
 	clearClick: function(){
 		$("#clear").on("click", function(){
-			if(!isNaN(controller.currentInput)){
+			if(!isNaN(controller.currentInput) && controller.justEvaluated===false){
 				controller.currentInput="0";
 				$("#display").text("0");
 			}
