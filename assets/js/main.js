@@ -105,7 +105,7 @@ buttons = {
 		this.equalClick();
 		this.decimalClick();
 		this.negateClick();
-		// this.allClearClick();
+		this.allClearClick();
 	},
 
 	numberClick : function(){
@@ -189,7 +189,7 @@ buttons = {
 				controller.currentInput="0";
 			}
 			
-			if(!controller.decimal.getStatus()){
+			if(!controller.decimal.getStatus() && controller.justEvaluated===false){
 				controller.currentInput= controller.currentInput.concat(".");
 				$("#display").text(controller.currentInput);
 				controller.decimal.setStatus(true);
@@ -201,7 +201,7 @@ buttons = {
 		$("#negate").on("click", function(){
 			//if current input is a number and not zero;
 			if(!isNaN(controller.currentInput) && controller.currentInput!=="0" && controller.justEvaluated === false){
-				
+					
 				//if the number is positive, change to negative
 				if(controller.currentInput[0]!=="-"){
 					controller.currentInput = "-" + controller.currentInput;
@@ -223,8 +223,9 @@ buttons = {
 	allClearClick: function(){
 		$("#allClear").on("click", function(){
 			controller.clearEval();
-			controller.clearCurrentInput();
-			$("#display").text("");
+			controller.currentInput ="0";
+			$("#display").text("0");
+			controller.justEvaluated = false;
 		});
 	}
 };
