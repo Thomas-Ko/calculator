@@ -6,7 +6,7 @@
 model = {
 	// toEval: "",
 	toEval: [],
-
+	decimalClicked: false,
 };
 
 // controller
@@ -33,6 +33,17 @@ controller = {
 		console.log("controller.clearCurrentInput();");
 		currentInput="";
 	},
+
+	decimal : {
+		getStatus: function(){
+			return model.decimalClicked;
+		},
+		setStatus: function(tOrF){
+			model.decimalClicked = tOrF;
+		}
+	},
+
+	
 
 	evaluate: function(){
 		console.log("start controller.evaluate()");
@@ -65,6 +76,7 @@ buttons = {
 		this.numberClick();
 		this.operatorClick();
 		this.equalClick();
+		this.decimalClick();
 		// this.allClearClick();
 	},
 
@@ -77,7 +89,6 @@ buttons = {
 
 			//checks if previous button pressed was an operator and if it was sends operator to model
 			if(["*","/","-","+"].indexOf(controller.currentInput)>-1){
-				console.log("operator found");
 				controller.sendToEval(controller.currentInput);
 				controller.currentInput="";
 			} 
@@ -94,12 +105,15 @@ buttons = {
 
 			console.log("operator click " + val);
 
+
 			if (controller.currentInput.length>0 && !isNaN(controller.currentInput)){
 				controller.sendToEval(controller.currentInput);
 				// controller.evaluate();
 				
 			} 
 				controller.currentInput = ""+ val;
+				controller.decimal.setStatus(false);
+
 			
 		});
 	},
@@ -119,6 +133,21 @@ buttons = {
 
 			controller.evaluate();
 			
+		});
+	},
+
+	decimalClick: function(){
+		$("#decimal").on("click", function(){
+			if(["*","/","-","+"].indexOf(controller.currentInput)>-1){
+				controller.sendToEval(controller.currentInput);
+				controller.currentInput="0";
+			}
+			
+			if(!controller.decimal.getStatus()){
+				controller.currentInput= controller.currentInput.concat(".");
+				$("#display").text(controller.currentInput);
+				controller.decimal.setStatus(true);
+			}
 		});
 	},
 
