@@ -90,9 +90,9 @@ controller = {
 			controller.sendToEval("0");
 			controller.currentInput="0";
 		} else {
-
+			val = val +"";
 			if(val.length>9){
-				val = val.splice(0,9);
+				val = val.slice(0,9);
 			}
 
 			$("#display").text(""+val);
