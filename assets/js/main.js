@@ -7,6 +7,7 @@ model = {
 	// toEval: "",
 	toEval: [],
 	decimalClicked: false,
+	// isPositive: true,
 };
 
 // controller
@@ -43,6 +44,15 @@ controller = {
 		}
 	},
 
+	// posOrNeg : {
+	// 	getStatus: function(){
+	// 		return model.isPositive;
+	// 	},
+	// 	setStatus: function(tOrF){
+	// 		model.isPositive = tOrF;
+	// 	}
+	// },
+
 	
 
 	evaluate: function(){
@@ -60,7 +70,7 @@ controller = {
 		controller.clearEval();
 
 		this.sendToEval(val);
-		controller.currentInput=val;
+		controller.currentInput=""+val;
 
 		console.log("end controller.evaluate()");
 		console.log(model.toEval);
@@ -77,6 +87,7 @@ buttons = {
 		this.operatorClick();
 		this.equalClick();
 		this.decimalClick();
+		this.negateClick();
 		// this.allClearClick();
 	},
 
@@ -95,7 +106,7 @@ buttons = {
 
 			/*if the first number of a new input is not zero, then put it on display; this is used so a user can't keep pressing zero to a get number like
 			00000023; instead it would display 23*/
-			if(val>0 && controller.currentInput==="0"){
+			if(val>0 && (controller.currentInput==="0")){
 				controller.currentInput="";
 				controller.currentInput= controller.currentInput.concat(val);
 				$("#display").text(controller.currentInput);
@@ -124,8 +135,6 @@ buttons = {
 			} 
 				controller.currentInput = ""+ val;
 				controller.decimal.setStatus(false);
-
-			
 		});
 	},
 
@@ -158,6 +167,29 @@ buttons = {
 				controller.currentInput= controller.currentInput.concat(".");
 				$("#display").text(controller.currentInput);
 				controller.decimal.setStatus(true);
+			}
+		});
+	},
+
+	negateClick: function(){
+		$("#negate").on("click", function(){
+			//if current input is a number and not zero;
+			if(!isNaN(controller.currentInput) && controller.currentInput!=="0"){
+				
+				//if the number is positive, change to negative
+				if(controller.currentInput[0]!=="-"){
+					controller.currentInput = "-" + controller.currentInput;
+					$("#display").text(controller.currentInput);
+					// controller.posOrNeg.setStatus(false);
+				} else if (controller.currentInput[0]==="-"){
+					//if the number is negative, change to positive
+						console.log("that needs to be removed");
+						controller.currentInput = controller.currentInput.slice(1);
+						$("#display").text(controller.currentInput);
+						// controller.posOrNeg.setStatus(true);
+					}
+				
+				// controller.currentInput =
 			}
 		});
 	},
