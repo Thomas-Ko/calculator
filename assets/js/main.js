@@ -12,7 +12,7 @@ model = {
 // controller
 
 controller = {
-	currentInput : "",
+	currentInput : "0",
 	sendToEval : function(value){
 		console.log("start controller.sendtoEval");
 		
@@ -90,10 +90,21 @@ buttons = {
 			//checks if previous button pressed was an operator and if it was sends operator to model
 			if(["*","/","-","+"].indexOf(controller.currentInput)>-1){
 				controller.sendToEval(controller.currentInput);
+				controller.currentInput="0";
+			}
+
+			/*if the first number of a new input is not zero, then put it on display; this is used so a user can't keep pressing zero to a get number like
+			00000023; instead it would display 23*/
+			if(val>0 && controller.currentInput==="0"){
 				controller.currentInput="";
-			} 
 				controller.currentInput= controller.currentInput.concat(val);
-				$("#display").text(controller.currentInput);			
+				$("#display").text(controller.currentInput);
+			//allows user to append any number to his input
+			} else if(controller.currentInput!=="0"){
+				controller.currentInput= controller.currentInput.concat(val);
+				$("#display").text(controller.currentInput);
+			}
+							
 
 			console.log("number click " + val);
 			console.log(model.toEval);
