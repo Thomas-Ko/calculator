@@ -1,94 +1,78 @@
-// $(".number").on("click", function(){
-// 	console.log(this).text();
-// });
-
+/*====================
+	MODEL
+====================*/
 
 model = {
-	// toEval: "",
+	//this is where the numbers and operators that need to be evaluated will be stored;
 	toEval: [],
-	// decimalClicked: false,
-	// isPositive: true,
-	
 };
 
-// controller
+
+/*====================
+	CONTROLLER
+====================*/
 
 controller = {
+
+	//this function is used to start the app;
+	init: function(){
+		controller.clearEval();
+		controller.clearCurrentInput();
+		buttons.init();
+	},
+
+	//this holds the current input of the user
 	currentInput : "0",
+	
+	//this tells you if the user just pressed the equals button
 	justEvaluated : false,
+
+	//sends a number or operator to model.toEval;
 	sendToEval : function(value){
-		console.log("start controller.sendtoEval");
-		
 		model.toEval.push(value);
 		controller.clearCurrentInput();
-
-		
 	},
+
+	//retrieves model.toEval data;
 	getToEval : function(value){
-		console.log("start controller.getToEval");
 		return model.toEval;
 	},
+
+	//clears the data in model.toEval;
 	clearEval : function(){
-		console.log("controller.clearEval();");
 		model.toEval=[];
 	},
+
 	clearCurrentInput : function(){
 		console.log("controller.clearCurrentInput();");
-		currentInput="";
+		currentInput="0";
 	},
 
-	// decimal : {
-	// 	getStatus: function(){
-	// 		return model.decimalClicked;
-	// 	},
-	// 	setStatus: function(tOrF){
-	// 		model.decimalClicked = tOrF;
-	// 	}
-	// },
-
-	// justEvaluated: {
-	// 	getStatus: function(){
-	// 		return model.justEvaluated;
-	// 	},
-	// 	setStatus: function(tOrF){
-	// 		model.justEvaluated=tOrF;
-	// 	}
-	// },
-
-	// posOrNeg : {
-	// 	getStatus: function(){
-	// 		return model.isPositive;
-	// 	},
-	// 	setStatus: function(tOrF){
-	// 		model.isPositive = tOrF;
-	// 	}
-	// },
-
-	
-
+	//evaluates everything inside toEval;
 	evaluate: function(){
-		console.log("start controller.evaluate()");
-		console.log(model.toEval);
 		var lastArrayItem = model.toEval[model.toEval.length-1];
 		
-
 		//if the last button pressed was an operator, it will be removed from the model.toEval array so it won't be evaluated
 		if (["-","+","/","*"].indexOf(lastArrayItem)>-1){
 			model.toEval.pop();
 		}
-		console.log("last item is:" +lastArrayItem);
+		
+		//convert model.toEval array into a string;
 		var str = controller.getToEval().join("");
-
 		//subtracting a negative number doesn't get evaluated in the eval function, so this just replaces two negations in a row to a plus operator
 		str = str.replace("--","+");
-		
+		//use eval method to evaluate the string;
 		var val = eval(str);
-		// if(controller.justEvaluated===false){
+		
+		//if value is greater than this number, return error message
 		if (val>999999999){
 			$("#display").text("E");
 			controller.clearEval();
 			controller.sendToEval("0");
 			controller.currentInput="0";
+		
+		/*this is used to cut off a number that is less than the error number, but that may have a huge deciaml;
+		for example; 54095.0000000000000004 would get cut down to not show a bunch of zeros and the 4 at the end */
 		} else {
 			val = val +"";
 			if(val.length>9){
@@ -97,29 +81,22 @@ controller = {
 
 			$("#display").text(""+val);
 			controller.clearEval();
-			console.log("cleared eval now it is");
-			console.log(model.toEval);
-
 			controller.sendToEval(val);
 			controller.currentInput=""+val;
 		}
 
-			
-			
-		// }
-
 		controller.justEvaluated = true;
-
-		console.log("end controller.evaluate()");
-		console.log(model.toEval);
 	}
 };
 
 
-
+/*====================
+	VIEW
+====================*/
 
 buttons = {
 
+	//invoked inside the controller.init function
 	init: function(){
 		this.numberClick();
 		this.operatorClick();
@@ -130,25 +107,21 @@ buttons = {
 		this.clearClick();
 	},
 
+	//when a user presses a number;
 	numberClick : function(){
 		$(".button").on("click", ".number", function(){
-			// console.log("value:");
-			// console.log($(this).val());
 			var val = $(this).val();
-			console.log(val);
 
 			//checks if previous button pressed was an operator and if it was sends operator to model
 			if(["*","/","-","+"].indexOf(controller.currentInput)>-1){
 				controller.sendToEval(controller.currentInput);
 				controller.currentInput="0";
 			}
-
 			//this resets everything to be evaluated; this is used when a user starts a new number after evaluating something.
 			if (controller.getToEval().length===1){
 				controller.clearEval();
-				controller.currentInput="";
+				controller.currentInput="0";
 			}
-
 			/*if the first number of a new input is not zero, then put it on display; this is used so a user can't keep pressing zero to a get number like
 			00000023; instead it would display 23*/
 			if(val>0 && (controller.currentInput==="0")){
@@ -164,70 +137,59 @@ buttons = {
 					controller.justEvaluated = false;
 				}
 			}
-							
-
-			console.log("number click " + val);
-			console.log(model.toEval);
 		});
 	},
+
+	//when a user presses the /, +, *, or - button
 	operatorClick: function(){
 		$(".button").on("click", ".operator", function(){
 			var val = $(this).val();
 
-			console.log("operator click " + val);
-
-
+			//if the currentInput was greater than zero and a number, then push that input into the model.toEval array
 			if (controller.currentInput.length>0 && !isNaN(controller.currentInput) && controller.justEvaluated === false){
 				controller.sendToEval(controller.currentInput);
-				
 			} 
-				controller.currentInput = ""+ val;
-				// controller.decimal.setStatus(false);
-				$("#display").text(controller.currentInput);
-				controller.justEvaluated = false;
+			//this displays the pressed operator button
+			controller.currentInput = ""+ val;
+			$("#display").text(controller.currentInput);
+			controller.justEvaluated = false;
 		});
 	},
 
+	//when a user presses the = button
 	equalClick:function(){
 		$("#equal").on("click", function(){
+			//send the previous number or operator into the model.toEval array
 			if(controller.justEvaluated===false){
 				controller.sendToEval(controller.currentInput);
 			}
-			// controller.currentInput="";
-			// $("#display").text("");
-
-			// console.log (controller.getToEval().join(""));
-			
-			// var val = eval(controller.getToEval().join(""));
-			// $("#display").text(""+val);
-			// controller.clearEval();
-			// controller.currentInput=""+val;
-
-			controller.evaluate();
-
-			
+			//evaluate expression
+			controller.evaluate();	
 		});
 	},
 
+	//when a user presses the . button
 	decimalClick: function(){
 		$("#decimal").on("click", function(){
+			
+			//if the previous input was an operator, send it to model.toEval and make the current input 0;
 			if(["*","/","-","+"].indexOf(controller.currentInput)>-1){
 				controller.sendToEval(controller.currentInput);
-
 				controller.currentInput="0";
 			}
 			
-			// if(!controller.decimal.getStatus() && controller.justEvaluated===false){
+			//if there is no decimal in the number, allow the user to use the decimal button
 			if(controller.currentInput.indexOf(".")===-1 && controller.justEvaluated===false){
 				controller.currentInput= controller.currentInput.concat(".");
 				$("#display").text(controller.currentInput);
-				// controller.decimal.setStatus(true);
 			}
 		});
 	},
 
+	//when the user presses the +/- button
 	negateClick: function(){
 		$("#negate").on("click", function(){
+			
 			//if current input is a number and not zero;
 			if(!isNaN(controller.currentInput) && controller.currentInput!=="0" && controller.justEvaluated === false){
 					
@@ -235,20 +197,19 @@ buttons = {
 				if(controller.currentInput[0]!=="-"){
 					controller.currentInput = "-" + controller.currentInput;
 					$("#display").text(controller.currentInput);
-					// controller.posOrNeg.setStatus(false);
+					
+				//if the number is negative, change to positive;	
 				} else if (controller.currentInput[0]==="-"){
 					//if the number is negative, change to positive
 						console.log("that needs to be removed");
 						controller.currentInput = controller.currentInput.slice(1);
 						$("#display").text(controller.currentInput);
-						// controller.posOrNeg.setStatus(true);
 					}
-				
-				// controller.currentInput =
 			}
 		});
 	},
 
+	//when the user presses the AC button
 	allClearClick: function(){
 		$("#allClear").on("click", function(){
 			controller.clearEval();
@@ -258,6 +219,7 @@ buttons = {
 		});
 	},
 
+	//when the user presses the C button
 	clearClick: function(){
 		$("#clear").on("click", function(){
 			if(!isNaN(controller.currentInput) && controller.justEvaluated===false){
@@ -267,8 +229,11 @@ buttons = {
 		});
 	},
 
-};
+};  //end buttons object
 
 
+/*====================
+	INITIALIZE
+====================*/
 
 buttons.init();
