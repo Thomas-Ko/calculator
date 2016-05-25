@@ -6,10 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  	<title></title>
+  	<title>Javascript Calculator</title>
 
    <!-- FONTS -->
-  	
+  	 <link href='https://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
 
    <!-- STYLESHEETS -->
 
@@ -37,8 +37,28 @@
 <body>
 
    <div class="container calc-container">
+      
+      <div class="row" id="calcTop">
+         
+         <div class="col-xs-7">
+             <h1>JS CALCULATOR</h1>
+         </div>
+         
+         <div class="col-xs-5" id="solar">
+            <div class="row">
+               <div class="col-xs-4 solar-box"></div>
+               <div class="col-xs-4 solar-box"></div>
+               <div class="col-xs-4 solar-box"></div>
+            </div>
+         </div>
+
+      </div>  <!--  /#calcTop -->
+
       <div class="row">
-         <div class="col-xs-12" id="display">0</div>
+         <div class="col-xs-12" id="displayBox">
+            
+         <div id="display">0</div>
+         </div>
       </div>
 
       <div class="row">
@@ -67,7 +87,7 @@
             </button>
          </div>
 
-      </div>
+      </div> <!--  /.row -->
 
       <div class="row">
          <div class="col-xs-3 button">
@@ -94,7 +114,7 @@
             </button>
          </div>
 
-      </div>
+      </div> <!--  /.row -->
 
       <div class="row">
          <div class="col-xs-3 button">
@@ -121,7 +141,7 @@
             </button>
          </div>
 
-      </div>
+      </div> <!--  /.row -->
 
       <div class="row">
          <div class="col-xs-3 button">
@@ -169,8 +189,13 @@
             </button>
          </div>
 
+      </div> <!--  /.row -->
+
+      <div class="row" id="calcBottom">
+         Created By: Thomas Kolodziejczak
       </div>
-   </div>
+      
+   </div> <!--  /.calc-container -->
 
 
 	<!-- MAIN javascript file -->

@@ -105,6 +105,7 @@ buttons = {
 		this.negateClick();
 		this.allClearClick();
 		this.clearClick();
+		this.solarHover();
 	},
 
 	//when a user presses a number;
@@ -228,6 +229,18 @@ buttons = {
 			}
 		});
 	},
+
+	//fun effect which fades out the display if cursor is over the solar panel
+	solarHover :function(){
+		$("#solar").on({
+   			 mouseenter: function() {
+        		$("#display").fadeOut();
+    		},
+    		mouseleave: function() {
+        		$("#display").fadeIn();
+    		}
+		});
+	}
 
 };  //end buttons object
 
