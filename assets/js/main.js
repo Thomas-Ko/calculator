@@ -75,8 +75,15 @@ controller = {
 		for example; 54095.0000000000000004 would get cut down to not show a bunch of zeros and the 4 at the end */
 		} else {
 			val = val +"";
-			if(val.length>9){
-				val = val.slice(0,9);
+			var total = 9;
+			if(val.indexOf("-")>-1){
+				total++;
+			}
+			if(val.indexOf(".")>-1){
+				total++;
+			}
+			if(val.length>total){
+				val = val.slice(0,total);
 			}
 
 			$("#display").text(""+val);
@@ -132,7 +139,11 @@ buttons = {
 				controller.justEvaluated = false;
 			//allows user to append any number to his input
 			} else if(controller.currentInput!=="0"){
-				if(controller.currentInput.length<9){
+				var total=9;
+				if(controller.currentInput.indexOf(".")>-1){
+					total++;
+				}
+				if(controller.currentInput.length<total){
 					controller.currentInput= controller.currentInput.concat(val);
 					$("#display").text(controller.currentInput);
 					controller.justEvaluated = false;
