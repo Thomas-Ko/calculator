@@ -44,7 +44,6 @@ controller = {
 	},
 
 	clearCurrentInput : function(){
-		console.log("controller.clearCurrentInput();");
 		currentInput="0";
 	},
 
@@ -63,20 +62,20 @@ controller = {
 		str = str.replace("--","+");
 		//use eval method to evaluate the string;
 		var val = eval(str);
+		val = val +"";
 		
-		//if value is greater than this number, return error message
-		if (val>999999999){
+		//if value is greater than this number, less than this number, or has an e in it, return error message
+		if (val>999999999 || val<-999999999 ||val.indexOf("e")>-1){
 			$("#display").text("E");
 			controller.clearEval();
 			controller.sendToEval("0");
 			controller.currentInput="0";
 		
-		/*this is used to cut off a number that is less than the error number, but that may have a huge deciaml;
-		for example; 54095.0000000000000004 would get cut down to not show a bunch of zeros and the 4 at the end */
+		/*this is used to cut off large decimal number;
+		for example, 54095.0000000000000004 would get cut down to fit on the screen*/
 		} else {
-			val = val +"";
 			var total = 9;
-			if(val.indexOf("-")>-1){
+			if(val.indexOf("-")===0){
 				total++;
 			}
 			if(val.indexOf(".")>-1){
@@ -213,7 +212,6 @@ buttons = {
 				//if the number is negative, change to positive;	
 				} else if (controller.currentInput[0]==="-"){
 					//if the number is negative, change to positive
-						console.log("that needs to be removed");
 						controller.currentInput = controller.currentInput.slice(1);
 						$("#display").text(controller.currentInput);
 					}
